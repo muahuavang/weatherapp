@@ -4,26 +4,44 @@
 <head>
     <meta charset="UTF-8">
     <title>Weather App</title>
-    <link rel="stylesheet" href="static/style.css">
-  </head>
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+</head>
 <body>
 
-  <div class="app-container">
-    <form method="post" class="input-container">
-      {% csrf_token %}
-      <input type="text" name="city1" placeholder="City">
-      <button type="submit">Get Weather</button>
-    </form>
+<div class="app-container">
+  <form method="post" class="input-container">
+    {% csrf_token %}
+    <input type="text" name="city1" placeholder="City">
+    <button type="submit">Get Weather</button>
+  </form>
 
-      {% if weather_data1 %}
-      <div class="weather-container">
-        <div class="city-container">
-            {% include 'city_weather.html' with weather_data=weather_data1 %}
-        </div>
+  {% if weather_data1 %}
+  <div class="weather-container">
+      <!-- Current weather -->
+      <div class="city-container {{ weather_data1.bg_class }}">
+          {% include 'city_weather.html' with weather_data=weather_data1 %}
       </div>
 
+      <!-- 7-day forecast -->
+      {% if weather_data1.forecast %}
+      <div class="forecast-container">
+          <table class="forecast-table">
+              <tr>
+                  {% for day in weather_data1.forecast %}
+                  <td class="forecast-day {{ day.bg_class }}">
+                      <h3>{{ day.date }}</h3>
+                      <p>{{ day.temperature }}° F</p>
+                      <p>{{ day.description }}</p>
+                      <img src="https://openweathermap.org/img/w/{{ day.icon }}.png" alt="{{ day.description }}">
+                  </td>
+                  {% endfor %}
+              </tr>
+          </table>
+      </div>
       {% endif %}
   </div>
+  {% endif %}
+</div>
 
 </body>
 </html>
